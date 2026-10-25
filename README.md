@@ -8,7 +8,7 @@
 
 仓库Settings → Pages → Build and deployment → Source选择GitHub Actions。首次启用后，如需重新运行，在Actions选择Deploy CampusFlow to GitHub Pages，点Run workflow。发布成功以GitHub返回的实际网址为准。
 
-静态版保留规则解析、外部AI JSON导入、原文核验、人工确认、任务管理、月历、活动冲突、ICS和JSON备份。静态版隐藏在线AI按钮，不请求服务端API。跨设备没有云同步，迁移前请导出JSON备份，再在新域名恢复。
+静态版保留规则解析、外部AI JSON导入、原文核验、人工确认、任务管理、月历、活动冲突、本地日历兼容ICS和JSON备份。静态版隐藏在线AI按钮。用户主动连接独立订阅服务时，才会上传最小日历字段。跨设备没有任务双向云同步，迁移前请导出JSON备份，再在新域名恢复。
 
 ## 本机运行
 
@@ -39,13 +39,17 @@ build:pages生成dist目录，使用相对资源路径，兼容项目子路径�
 
 先在lib/samples.mjs加入自己编写的脱敏通知，记录期望任务数量和时间。再测试候选核验、保存刷新和备份恢复，记录实际结果。不要将AI测试写成自己的独立开发经历。
 
-核心代码：lib/flow.mjs负责规则提取、引用核验、活动冲突与ICS；src/App.jsx负责交互；server.mjs和lib/ai.mjs负责本机可选AI接口；tests/flow.test.mjs含54项核心及回归测试。
+核心代码：lib/flow.mjs负责规则提取、引用核验、活动冲突与原格式ICS；lib/calendar.mjs生成兼容日历；src/App.jsx和src/CalendarConnect.jsx负责交互；server.mjs和lib/ai.mjs负责本机可选AI接口；lib/calendar-service.mjs提供可选持久订阅接口。npm test含66项核心、回归和日历测试。
 
 ## 当前限制
 
-无OCR、群消息读取、推送、循环课表、云同步和多人协作。规则可能漏提，含糊日期保留待确认；日历客户端对VTODO支持不同，需实际核对。日志存于浏览器且可修改。API适配器的自动化用例使用模拟响应，真实模型联调未完成。Windows、iPhone真机体验尚待用户亲测。
+无OCR、群消息读取、网站后台推送、循环课表、任务双向云同步和多人协作。规则可能漏提，含糊日期保留待确认。兼容日历支持可选提醒，实际通知与订阅刷新由客户端决定；原格式VTODO支持因客户端而异。日志存于浏览器且可修改。AI适配器的自动化用例使用模拟响应，真实模型联调未完成。Windows、iPhone真机体验尚待用户亲测。
 
 
 ## v0.1.1
 
 修复取消/否定通知、中文时段、课程区间和同句多事项处理，演示样例日期随当天生成。仍须逐项人工确认。变更与测试记录见[修复记录](docs/fixes-v011.md)。
+
+## v0.2.0 日历导入与订阅
+
+“我的任务”和“时间安排”增加“导入 / 订阅日历”。默认下载兼容iPhone/Outlook的ICS，截止事项也显示为日历事件；可选提前提醒。持续订阅接口已经实现，GitHub Pages必须连接另行部署的HTTPS订阅服务才能启用，当前没有公开个人任务或创建公共订阅服务。部署方式、同步边界和隐私范围见[日历说明](docs/calendar-v020.md)。
