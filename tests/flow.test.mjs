@@ -65,3 +65,5 @@ test('保存活动须知属于普通待办',()=>assert.equal(parseRules('请保�
 test('AI中文结束时间仍需要真实区间依据',()=>{const s='2026年10月28日下午2点至4点上课。';const payload={tasks:[{title:'上课',kind:'event',when:'2026-10-28T14:00',end:'2026-10-28T16:00',evidence:{title:s,when:s,end:s}}]};assert.equal(validateAI(payload,s,ref).tasks[0].end,'2026-10-28T16:00');payload.tasks[0].end='2026-10-28T17:00';assert.equal(validateAI(payload,s,ref).tasks[0].end,null)});
 
 test('演示日期随发布日期跨月生成且保持未来',()=>{const s=makeSamples('2026-10-30');const ts=parseRules(s[0].text,s[0].referenceDate).tasks;assert.equal(ts[0].when,'2026-11-02T17:00');assert.equal(ts[1].when,'2026-11-03T14:00');assert.equal(ts.length,3)});
+
+test('活动时间另行通知的补充句不新增行动',()=>{const ts=parseRules(samples[2].text,ref).tasks;assert.equal(ts.length,1);assert.equal(ts[0].kind,'todo');assert.equal(ts[0].when,null)});

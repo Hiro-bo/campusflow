@@ -39,7 +39,7 @@ build:pages生成dist目录，使用相对资源路径，兼容项目子路径�
 
 先在lib/samples.mjs加入自己编写的脱敏通知，记录期望任务数量和时间。再测试候选核验、保存刷新和备份恢复，记录实际结果。不要将AI测试写成自己的独立开发经历。
 
-核心代码：lib/flow.mjs负责规则提取、引用核验、活动冲突与ICS；src/App.jsx负责交互；server.mjs和lib/ai.mjs负责本机可选AI接口；tests/flow.test.mjs含53项核心及回归测试。
+核心代码：lib/flow.mjs负责规则提取、引用核验、活动冲突与ICS；src/App.jsx负责交互；server.mjs和lib/ai.mjs负责本机可选AI接口；tests/flow.test.mjs含54项核心及回归测试。
 
 ## 当前限制
 
