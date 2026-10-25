@@ -4,11 +4,14 @@ import fs from 'node:fs/promises';
 import {createServer,loadEnv} from 'vite';
 import {parseOnline} from './lib/ai.mjs';
 import {validDate} from './lib/flow.mjs';
+import {createCalendarService} from './lib/calendar-service.mjs';
 const config={...loadEnv('development',process.cwd(),''),...process.env};
 const port=Number(config.PORT||5173);
 const origin=`http://localhost:${port}`;
+const calendarService=createCalendarService({directory:config.CAMPUSFLOW_CALENDAR_DIR||'.campusflow-calendars',origins:[origin,`http://127.0.0.1:${port}`,...String(config.CAMPUSFLOW_CALENDAR_ORIGINS||'https://hiro-bo.github.io').split(',').map(s=>s.trim()).filter(Boolean)]});
 const vite=await createServer({server:{middlewareMode:true},appType:'spa'});
 const server=http.createServer(async(req,res)=>{
+ if(await calendarService(req,res))return;
  const reply=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
  if(req.url==='/api/config')return reply(200,{aiConfigured:!!config.CAMPUSFLOW_AI_KEY});
  if(req.url==='/api/parse'){
@@ -24,3 +27,4 @@ const server=http.createServer(async(req,res)=>{
  vite.middlewares(req,res,()=>{res.statusCode=404;res.end('Not found');});
 });
 server.listen(port,'127.0.0.1',()=>console.log(`CampusFlow: ${origin} (Ctrl+C to stop)`));
+
